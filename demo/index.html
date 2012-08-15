@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>PDF Panel</title>
+    
+    <link rel="stylesheet" href="../lib/extjs-4.1.1/resources/css/ext-all.css">
+    <link rel="stylesheet" href="../ux/util/PDF/TextLayerBuilder.css">
+    
+    <script src="../lib/extjs-4.1.1/ext-all.js"></script>
+    <script src="../lib/pdf.js/pdf.js"></script>
+    <script src="../ux/panel/PDF.js"></script>
+    <script src="../ux/util/PDF/TextLayerBuilder.js"></script>
+    <script>
+        Ext.onReady(function(){
+            Ext.tip.QuickTipManager.init();
+            
+            Ext.create('Ext.ux.panel.PDF', {
+                title    : 'PDF Panel',
+                width    : 489,
+                height   : 633,
+                pageScale: 0.75,                                           // Initial scaling of the PDF. 1 = 100%
+                src      : 'http://cdn.mozilla.net/pdfjs/tracemonkey.pdf', // URL to the PDF - Same Domain or Server with CORS Support
+                renderTo : Ext.getBody()
+            });
+        });
+    </script>
+</head>
+<body>
+</body>
+</html>
