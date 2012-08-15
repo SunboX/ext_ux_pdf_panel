@@ -1,0 +1,15 @@
+.pdf-text-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    color: #000;
+    font-family: sans-serif;
+}
+
+.pdf-text-layer > div {
+    color: transparent;
+    position: absolute;
+    line-height:1.3;
+}
