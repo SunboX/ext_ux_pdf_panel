@@ -8,16 +8,16 @@
 
     textLayerDiv: null,
 
-    constructor: function (config) {
+    constructor: function(config){
         this.textLayerDiv = config.textLayerDiv;
     },
 
-    beginLayout: function () {
+    beginLayout: function(){
         this.textDivs = [];
         this.textLayerQueue = [];
     },
 
-    endLayout: function () {
+    endLayout: function(){
         var me = this,
             textDivs = me.textDivs,
             textLayerDiv = me.textLayerDiv,
@@ -29,18 +29,18 @@
             ctx = canvas.getContext('2d');
 
         // Render the text layer, one div at a time
-        function renderTextLayer() {
-            if(textDivs.length === 0) {
+        function renderTextLayer(){
+            if(textDivs.length === 0){
                 clearInterval(renderTimer);
                 renderingDone = true;
                 me.textLayerDiv = textLayerDiv = canvas = ctx = null;
                 return;
             }
             var textDiv = textDivs.shift();
-            if(textDiv.dataset.textLength > 0) {
+            if(textDiv.dataset.textLength > 0){
                 textLayerDiv.appendChild(textDiv);
 
-                if(textDiv.dataset.textLength > 1) { // avoid div by zero
+                if(textDiv.dataset.textLength > 1){ // avoid div by zero
                     // Adjust div width to match canvas text
 
                     ctx.font = textDiv.style.fontSize + ' sans-serif';
@@ -48,15 +48,15 @@
 
                     var textScale = textDiv.dataset.canvasWidth / width;
 
-                    var vendorPrefix = (function () {
+                    var vendorPrefix = (function(){
                         if('result' in arguments.callee) return arguments.callee.result;
 
                         var regex = /^(Moz|Webkit|Khtml|O|ms|Icab)(?=[A-Z])/;
 
                         var someScript = document.getElementsByTagName('script')[0];
 
-                        for(var prop in someScript.style) {
-                            if(regex.test(prop)) {
+                        for(var prop in someScript.style){
+                            if(regex.test(prop)){
                                 return arguments.callee.result = prop.match(regex)[0];
                             }
                         }
@@ -80,8 +80,8 @@
         // of no scroll events
         var scrollTimer = null;
 
-        function textLayerOnScroll() {
-            if(renderingDone) {
+        function textLayerOnScroll(){
+            if(renderingDone){
                 window.removeEventListener('scroll', textLayerOnScroll, false);
                 return;
             }
@@ -90,7 +90,7 @@
             clearInterval(renderTimer);
 
             clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(function textLayerScrollTimer() {
+            scrollTimer = setTimeout(function textLayerScrollTimer(){
                 // Resume rendering
                 renderTimer = setInterval(renderTextLayer, renderInterval);
             }, resumeInterval);
@@ -99,7 +99,7 @@
         window.addEventListener('scroll', textLayerOnScroll, false);
     }, // endLayout
 
-    appendText: function (text, fontName, fontSize) {
+    appendText: function(text, fontName, fontSize){
         var textDiv = document.createElement('div');
 
         // vScale and hScale already contain the scaling to pixel units

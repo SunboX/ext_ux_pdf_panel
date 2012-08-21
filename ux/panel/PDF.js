@@ -12,7 +12,6 @@ Ext.define('Ext.ux.panel.PDF', {
     extraBaseCls: Ext.baseCSSPrefix + 'pdf',
     extraBodyCls: Ext.baseCSSPrefix + 'pdf-body',
 
-    layout: 'fit',
     autoScroll: true,
 
     /**
@@ -238,11 +237,20 @@ Ext.define('Ext.ux.panel.PDF', {
         userItems.push({
             itemId: 'pdfPageContainer',
             xtype: 'container',
+            width: '100%',
+            height: '100%',
             html: '<canvas class="pdf-page-container"></canvas>' + textLayerDiv,
             listeners: {
                 afterrender: function(){
                     me.pageContainer = this.el.query('.pdf-page-container')[0];
                     me.pageContainer.mozOpaque = true;
+                    
+                    var ctx = me.pageContainer.getContext('2d');
+                    ctx.save();
+                    ctx.fillStyle = 'rgb(255, 255, 255)';
+                    ctx.fillRect(0, 0, me.pageContainer.width, me.pageContainer.height);
+                    ctx.restore();
+                    
                     if(!PDFJS.disableTextLayer) {
                         me.textLayerDiv = this.el.query('.pdf-text-layer')[0];
                     }
@@ -307,7 +315,7 @@ Ext.define('Ext.ux.panel.PDF', {
         toolbar.child('#scaleCombo').setDisabled(isEmpty).setValue(me.pageScale);
 
         // Using promise to fetch the page
-        me.pdfDoc.getPage(num).then(function (page) {
+        me.pdfDoc.getPage(num).then(function(page) {
             var viewport = page.getViewport(me.pageScale);
             me.pageContainer.height = viewport.height;
             me.pageContainer.width = viewport.width;
