@@ -1,10 +1,10 @@
 /**
- * Copyright (c) 2012 André Fiedler, <https://twitter.com/sonnenkiste>
+ * Copyright(c) 2012 André Fiedler, <https://twitter.com/sonnenkiste>
  *
  * license: MIT-style license
  */
 
-Ext.define('Ext.ux.panel.PDF', {
+Ext.define('Ext.ux.panel.PDF',{
     extend: 'Ext.panel.Panel',
 
     alias: 'widget.pdfpanel',
@@ -15,87 +15,87 @@ Ext.define('Ext.ux.panel.PDF', {
     autoScroll: true,
 
     /**
-     * @cfg {String} src
+     * @cfg{String} src
      * URL to the PDF - Same Domain or Server with CORS Support
      */
     src: '',
 
     /**
-     * @cfg {Double} pageScale
+     * @cfg{Double} pageScale
      * Initial scaling of the PDF. 1 = 100%
      */
     pageScale: 1,
 
     /**
-     * @cfg {Boolean} disableWorker
-     * Disable workers to avoid yet another cross-origin issue (workers need the URL of
+     * @cfg{Boolean} disableWorker
+     * Disable workers to avoid yet another cross-origin issue(workers need the URL of
      * the script to be loaded, and currently do not allow cross-origin scripts)
      */
     disableWorker: true,
 
     /**
-     * @cfg {Boolean} disableTextLayer
+     * @cfg{Boolean} disableTextLayer
      * Enable to render selectable but hidden text layer on top of an PDF-Page.
      * This feature is buggy by now and needs more investigation!
      */
     disableTextLayer: true, // true by now, cause it´s buggy
     
     /**
-     * @cfg {String} loadingMessage
+     * @cfg{String} loadingMessage
      * The text displayed when loading the PDF.
      */
     loadingMessage: 'Loading PDF, please wait...',
     
     /**
-     * @cfg {String} beforePageText
+     * @cfg{String} beforePageText
      * The text displayed before the input item.
      */
     beforePageText: 'Page',
     
     /**
-     * @cfg {String} afterPageText
+     * @cfg{String} afterPageText
      * Customizable piece of the default paging text. Note that this string is formatted using
-     * {0} as a token that is replaced by the number of total pages. This token should be preserved when overriding this
+     *{0} as a token that is replaced by the number of total pages. This token should be preserved when overriding this
      * string if showing the total page count is desired.
      */
-    afterPageText: 'of {0}',
+    afterPageText: 'of{0}',
     
     /**
-     * @cfg {String} firstText
+     * @cfg{String} firstText
      * The quicktip text displayed for the first page button.
      * **Note**: quick tips must be initialized for the quicktip to show.
      */
     firstText: 'First Page',
     
     /**
-     * @cfg {String} prevText
+     * @cfg{String} prevText
      * The quicktip text displayed for the previous page button.
      * **Note**: quick tips must be initialized for the quicktip to show.
      */
     prevText: 'Previous Page',
     
     /**
-     * @cfg {String} nextText
+     * @cfg{String} nextText
      * The quicktip text displayed for the next page button.
      * **Note**: quick tips must be initialized for the quicktip to show.
      */
     nextText: 'Next Page',
     
     /**
-     * @cfg {String} lastText
+     * @cfg{String} lastText
      * The quicktip text displayed for the last page button.
      * **Note**: quick tips must be initialized for the quicktip to show.
      */
     lastText: 'Last Page',
     
     /**
-     * @cfg {Number} inputItemWidth
+     * @cfg{Number} inputItemWidth
      * The width in pixels of the input field used to display and change the current page number.
      */
     inputItemWidth: 30,
     
     /**
-     * @cfg {Number} inputItemWidth
+     * @cfg{Number} inputItemWidth
      * The width in pixels of the combobox used to change display scale of the PDF.
      */
     scaleWidth: 60,
@@ -230,7 +230,7 @@ Ext.define('Ext.ux.panel.PDF', {
         me.dockedItems = userDockedItems;
 
         var textLayerDiv = '';
-        if(!PDFJS.disableTextLayer) {
+        if(!PDFJS.disableTextLayer){
             textLayerDiv = '<div class="pdf-text-layer"></div>';
         }
 
@@ -240,7 +240,7 @@ Ext.define('Ext.ux.panel.PDF', {
             width: '100%',
             height: '100%',
             html: '<canvas class="pdf-page-container"></canvas>' + textLayerDiv,
-            listeners: {
+            listeners:{
                 afterrender: function(){
                     me.pageContainer = this.el.query('.pdf-page-container')[0];
                     me.pageContainer.mozOpaque = true;
@@ -251,7 +251,7 @@ Ext.define('Ext.ux.panel.PDF', {
                     ctx.fillRect(0, 0, me.pageContainer.width, me.pageContainer.height);
                     ctx.restore();
                     
-                    if(!PDFJS.disableTextLayer) {
+                    if(!PDFJS.disableTextLayer){
                         me.textLayerDiv = this.el.query('.pdf-text-layer')[0];
                     }
                 }
@@ -262,23 +262,20 @@ Ext.define('Ext.ux.panel.PDF', {
         me.callParent(arguments);
 
         me.on('afterrender', function(){
-            me.loader = new Ext.LoadMask(me.child('#pdfPageContainer'), {
+            me.loader = new Ext.LoadMask(me.child('#pdfPageContainer'),{
                 msg: me.loadingMessage
             });
             me.loader.show();
-        }, me, {
+        }, me,{
             single: true
         });
 
-        if(me.disableWorker) {
+        if(me.disableWorker){
             PDFJS.disableWorker = true;
         }
 
         // Asynchronously download PDF as an ArrayBuffer
-        PDFJS.getDocument(me.src).then(function (pdfDoc) {
-            me.pdfDoc = pdfDoc;
-            me.onLoad();
-        });
+        me.getDocument();
     },
 
     onLoad: function(){
@@ -290,7 +287,7 @@ Ext.define('Ext.ux.panel.PDF', {
         me.renderPage(me.currentPage);
     },
 
-    renderPage: function (num) {
+    renderPage: function(num){
         var me = this,
             toolbar = me.child('#pagingToolbar'),
             isEmpty, pageCount,
@@ -315,7 +312,7 @@ Ext.define('Ext.ux.panel.PDF', {
         toolbar.child('#scaleCombo').setDisabled(isEmpty).setValue(me.pageScale);
 
         // Using promise to fetch the page
-        me.pdfDoc.getPage(num).then(function(page) {
+        me.pdfDoc.getPage(num).then(function(page){
             var viewport = page.getViewport(me.pageScale);
             me.pageContainer.height = viewport.height;
             me.pageContainer.width = viewport.width;
@@ -326,12 +323,12 @@ Ext.define('Ext.ux.panel.PDF', {
             ctx.fillRect(0, 0, me.pageContainer.width, me.pageContainer.height);
             ctx.restore();
 
-            var textLayer = me.textLayerDiv ? Ext.create('Ext.ux.util.PDF.TextLayerBuilder', {
+            var textLayer = me.textLayerDiv ? Ext.create('Ext.ux.util.PDF.TextLayerBuilder',{
                 textLayerDiv: me.textLayerDiv
             }) : null;
 
             // Render PDF page into canvas context
-            var renderContext = {
+            var renderContext ={
                 canvasContext: ctx,
                 viewport: viewport,
                 textLayer: textLayer
@@ -342,11 +339,11 @@ Ext.define('Ext.ux.panel.PDF', {
 
             me.isRendering = false;
 
-            if(me.loader) {
+            if(me.loader){
                 me.loader.destroy();
             }
 
-            if(me.rendered) {
+            if(me.rendered){
                 me.fireEvent('change', me, {
                     current: me.currentPage,
                     total: me.pdfDoc.numPages
@@ -357,7 +354,7 @@ Ext.define('Ext.ux.panel.PDF', {
 
     moveFirst: function(){
         var me = this;
-        if(me.fireEvent('beforechange', me, 1) !== false) {
+        if(me.fireEvent('beforechange', me, 1) !== false){
             me.renderPage(1);
         }
     },
@@ -366,8 +363,8 @@ Ext.define('Ext.ux.panel.PDF', {
         var me = this,
             prev = me.currentPage - 1;
 
-        if(prev > 0) {
-            if(me.fireEvent('beforechange', me, prev) !== false) {
+        if(prev > 0){
+            if(me.fireEvent('beforechange', me, prev) !== false){
                 me.renderPage(prev);
             }
         }
@@ -378,8 +375,8 @@ Ext.define('Ext.ux.panel.PDF', {
             total = me.pdfDoc.numPages,
             next = me.currentPage + 1;
 
-        if(next <= total) {
-            if(me.fireEvent('beforechange', me, next) !== false) {
+        if(next <= total){
+            if(me.fireEvent('beforechange', me, next) !== false){
                 me.renderPage(next);
             }
         }
@@ -389,7 +386,7 @@ Ext.define('Ext.ux.panel.PDF', {
         var me = this,
             last = me.pdfDoc.numPages;
 
-        if(me.fireEvent('beforechange', me, last) !== false) {
+        if(me.fireEvent('beforechange', me, last) !== false){
             me.renderPage(last);
         }
     },
@@ -398,7 +395,7 @@ Ext.define('Ext.ux.panel.PDF', {
         var me = this, v = me.child('#pagingToolbar').child('#inputItem').getValue(),
             pageNum = parseInt(v, 10);
 
-        if(!v || isNaN(pageNum)) {
+        if(!v || isNaN(pageNum)){
             me.child('#pagingToolbar').child('#inputItem').setValue(me.currentPage);
             return false;
         }
@@ -409,52 +406,68 @@ Ext.define('Ext.ux.panel.PDF', {
         this.child('#pagingToolbar').child('#inputItem').select();
     },
 
-    onPagingBlur: function (e) {
+    onPagingBlur: function(e){
         var curPage = this.getPageData().currentPage;
         this.child('#pagingToolbar').child('#inputItem').setValue(curPage);
     },
 
-    onPagingKeyDown: function (field, e) {
+    onPagingKeyDown: function(field, e){
         var me = this,
             k = e.getKey(),
             increment = e.shiftKey ? 10 : 1,
             pageNum, total = me.pdfDoc.numPages;
 
-        if(k == e.RETURN) {
+        if(k == e.RETURN){
             e.stopEvent();
             pageNum = me.readPageFromInput();
-            if(pageNum !== false) {
+            if(pageNum !== false){
                 pageNum = Math.min(Math.max(1, pageNum), total);
-                if(me.fireEvent('beforechange', me, pageNum) !== false) {
+                if(me.fireEvent('beforechange', me, pageNum) !== false){
                     me.renderPage(pageNum);
                 }
             }
-        } else if(k == e.HOME || k == e.END) {
+        } else if(k == e.HOME || k == e.END){
             e.stopEvent();
             pageNum = k == e.HOME ? 1 : total;
             field.setValue(pageNum);
-        } else if(k == e.UP || k == e.PAGE_UP || k == e.DOWN || k == e.PAGE_DOWN) {
+        } else if(k == e.UP || k == e.PAGE_UP || k == e.DOWN || k == e.PAGE_DOWN){
             e.stopEvent();
             pageNum = me.readPageFromInput();
-            if(pageNum) {
-                if(k == e.DOWN || k == e.PAGE_DOWN) {
+            if(pageNum){
+                if(k == e.DOWN || k == e.PAGE_DOWN){
                     increment *= -1;
                 }
                 pageNum += increment;
-                if(pageNum >= 1 && pageNum <= total) {
+                if(pageNum >= 1 && pageNum <= total){
                     field.setValue(pageNum);
                 }
             }
         }
     },
 
-    onScaleBlur: function (e) {
+    onScaleBlur: function(e){
         this.child('#pagingToolbar').child('#scaleCombo').setValue(this.pageScale);
     },
 
-    onScaleChange: function (combo, newValue) {
+    onScaleChange: function(combo, newValue){
         var me = this;
         me.pageScale = newValue;
         me.renderPage(me.currentPage);
+    },
+    
+    setSrc: function(src){
+        this.src = src;
+        return this.getDocument();
+    },
+    
+    getDocument: function(){
+        var me = this;
+        if(!!me.src){
+            PDFJS.getDocument(me.src).then(function(pdfDoc){
+                me.pdfDoc = pdfDoc;
+                me.onLoad();
+            });
+        }
+        return me;
     }
 });
