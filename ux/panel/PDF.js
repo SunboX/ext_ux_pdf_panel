@@ -278,13 +278,18 @@ Ext.define('Ext.ux.panel.PDF',{
         me.getDocument();
     },
 
-    onLoad: function(){
-        var me = this, isEmpty;
+    onLoad: function() {
+        try {
+            var me = this, isEmpty;
 
-        isEmpty = me.pdfDoc.numPages === 0;
-        me.currentPage = me.currentPage || (isEmpty ? 0 : 1);
+            isEmpty = me.pdfDoc.numPages === 0;
+            me.currentPage = me.currentPage || (isEmpty ? 0 : 1);
 
-        me.renderPage(me.currentPage);
+            me.renderPage(me.currentPage);
+        }
+        catch (error) {
+            Ext.log( {level: "warning"}, "PDF: Can't render: " + error.message);
+        }
     },
 
     renderPage: function(num){
@@ -312,7 +317,18 @@ Ext.define('Ext.ux.panel.PDF',{
         toolbar.child('#scaleCombo').setDisabled(isEmpty).setValue(me.pageScale);
 
         // Using promise to fetch the page
-        me.pdfDoc.getPage(num).then(function(page){
+        me.pdfDoc.getPage(num).then(function(page) {
+            
+            if (!me.pageContainer) {
+                // pageContainer not available. Widget destroyed already?
+                Ext.log( {level: "warning"}, "PDF: pageContainer not ready to render page.");
+
+                Ext.resumeLayouts(true);
+                me.isRendering = false;
+                
+                return;
+            }
+            
             var viewport = page.getViewport(me.pageScale);
             me.pageContainer.height = viewport.height;
             me.pageContainer.width = viewport.width;
