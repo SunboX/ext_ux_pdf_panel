@@ -260,8 +260,12 @@ Ext.define('Ext.ux.panel.PDF',{
         me.items = userItems;
 
         me.callParent(arguments);
-
-        me.on('afterrender', function(){
+	
+	// An exception was thrown in afterrender handler when upgrading to 2.4.3. It seems that there is
+        // a bug in that version, however using a proposed workaround from Sencha forum solved the problem: 
+	// (http://www.sencha.com/forum/showthread.php?291412-Error-after-upgrade-to-ExtJS-4.2.3&p=1064679)
+	// 'afterrenderer' --> 'boxready'
+        me.on('boxready', function(){ 
             me.loader = new Ext.LoadMask(me.child('#pdfPageContainer'),{
                 msg: me.loadingMessage
             });
